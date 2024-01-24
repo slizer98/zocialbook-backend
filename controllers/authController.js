@@ -1,19 +1,54 @@
+import { sendEmailVerification } from '../emails/authEmailService.js'
 import User from '../models/User.js'
+import { errorMessages } from '../utils/index.js'
 
 const register = async (req, res) => {
     if(Object.values(req.body).includes('')) {
-        const error = new Error('Todos los campos son obligatorios')
-        return res.status(400).json({ msg: error.message })
+        errorMessages(res, 'Todos los campos son obligatorios', 400)
     }
+
+    const { email, password, username } = req.body
+    const userExists = await User.findOne({ email })
+    if(userExists) {
+        errorMessages(res, 'El usuario ya esta registrado', 400)
+    }
+    
+    const MIN_PASSWORD_LENGTH = 8
+    if(password.trim().length < MIN_PASSWORD_LENGTH) {
+        errorMessages(res, `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`, 400)
+    }
+    
     try {
         const user = new User(req.body)
+        const result = await user.save()
+       
+        const { username, email, token } = result
+        sendEmailVerification({ username, email, token })
+        res.status(201).json({ msg: 'Usuario creado correctamente, revisa tu correo' })
+    } catch (error) {
+        if (error.code === 11000) {
+            errorMessages(res, 'El nombre de usuario debe ser unico', 400)
+        }
+    }
+}
+
+const verifyAccount = async (req, res) => {
+    const { token } = req.params
+    const user = await User.findOne({ token })
+    if(!user) {
+        errorMessages(res, 'Hubo un error, token no válido', 401)
+    }
+    try {
+        user.verified = true
+        user.token = ""
         await user.save()
-        res.status(201).json({ msg: 'Usuario creado correctamente' })
+        res.status(200).json({ msg: 'Cuenta verificada correctamente' })
     } catch (error) {
         console.log(error)
     }
 }
 
 export {
-    register
+    register,
+    verifyAccount
 }

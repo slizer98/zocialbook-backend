@@ -1,29 +1,34 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt'
+import { uniqueId } from '../utils/index.js'
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true,
+    trim: true,
   },
   email: {
     type: String,
     required: true,
     unique: true,
+    lowercase:true,
   },
   password: {
     type: String,
     required: true,
   },
-  dateOfBirth: {
+  createAt: {
     type: Date,
     required: true,
   },
   aboutMe: String,
   favoriteAuthor: String,
   profilePicture: String, 
-  token: String,
+  token: {
+    type: String,
+    default: () =>uniqueId(),
+  },
   verified: {
     type: Boolean,
     default: false,
