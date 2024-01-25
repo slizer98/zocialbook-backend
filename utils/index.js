@@ -13,7 +13,7 @@ function handleNotFoundError(message, res) {
 
 function errorMessages(res, msgError, code) {
     const error = new Error(msgError)
-    return res.status(code).json({ msg: error.message })
+    res.status(code).json({ msg: error.message })
 }
 
 const uniqueId = () => Date.now().toString(32) + Math.random().toString(32).substring(2)

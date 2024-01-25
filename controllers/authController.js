@@ -4,18 +4,18 @@ import { errorMessages } from '../utils/index.js'
 
 const register = async (req, res) => {
     if(Object.values(req.body).includes('')) {
-        errorMessages(res, 'Todos los campos son obligatorios', 400)
+        return  errorMessages(res, 'Todos los campos son obligatorios', 400)
     }
 
     const { email, password, username } = req.body
     const userExists = await User.findOne({ email })
     if(userExists) {
-        errorMessages(res, 'El usuario ya esta registrado', 400)
+        return errorMessages(res, 'El usuario ya esta registrado', 400)
     }
     
     const MIN_PASSWORD_LENGTH = 8
     if(password.trim().length < MIN_PASSWORD_LENGTH) {
-        errorMessages(res, `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`, 400)
+        return errorMessages(res, `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`, 400)
     }
     
     try {
@@ -36,7 +36,7 @@ const verifyAccount = async (req, res) => {
     const { token } = req.params
     const user = await User.findOne({ token })
     if(!user) {
-        errorMessages(res, 'Hubo un error, token no válido', 401)
+        return errorMessages(res, 'Hubo un error, token no válido', 401)
     }
     try {
         user.verified = true
@@ -48,7 +48,25 @@ const verifyAccount = async (req, res) => {
     }
 }
 
+const login = async (req, res) => {
+    const { email, password } = req.body
+    const user = await User.findOne({ email })
+    if(!user) {
+        return errorMessages(res, 'El usuario no existe', 400)
+    }   
+    if(!user.verified) {
+        return errorMessages(res, 'Tu cuenta no ha sido confirmada aún', 400)
+    }
+    if(await user.checkPassword(password)) {
+        res.status(200).json({ msg: 'Usuario Autenticado' })
+    } else {
+        return errorMessages(res, 'La contraseña es incorrecta', 400)
+    }
+
+}
+
 export {
     register,
-    verifyAccount
+    verifyAccount,
+    login
 }
