@@ -7,7 +7,7 @@ const register = async (req, res) => {
         return  errorMessages(res, 'Todos los campos son obligatorios', 400)
     }
 
-    const { email, password, username } = req.body
+    const { username, email, password  } = req.body
     const userExists = await User.findOne({ email })
     if(userExists) {
         return errorMessages(res, 'El usuario ya esta registrado', 400)
@@ -27,7 +27,7 @@ const register = async (req, res) => {
         res.status(201).json({ msg: 'Usuario creado correctamente, revisa tu correo' })
     } catch (error) {
         if (error.code === 11000) {
-            errorMessages(res, 'El nombre de usuario debe ser unico', 400)
+            return errorMessages(res, 'El nombre de usuario debe ser unico', 400)
         }
     }
 }

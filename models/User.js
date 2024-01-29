@@ -29,6 +29,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: () =>uniqueId(),
   },
+  followers: {
+    type: Number,
+    default: 0,
+  },
+  following: {
+    type: Number,
+    default: 0,
+  },
   verified: {
     type: Boolean,
     default: false,
