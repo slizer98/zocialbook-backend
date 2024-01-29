@@ -16,7 +16,7 @@ export async function sendEmailVerification({ username, email, token }) {
         html: `
             <p>Hola: ${username}, confirma tu cuenta en ZocialBook</p>
             <p>Tu cuenta esta casi lista, solo debes confirmarla en es siguiente enlace:</p>
-            <a href="${process.env.FRONTEND_URL}/auth/verify/${token}">Confirmar Cuenta</a>
+            <a href="${process.env.FRONTEND_URL}/auth/confirmar-cuenta/${token}">Confirmar Cuenta</a>
             <p>Si tu no creaste esta cuenta, puedes ignoral este mensaje</p>
             `
     })

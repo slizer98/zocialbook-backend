@@ -1,6 +1,6 @@
 import { sendEmailVerification } from '../emails/authEmailService.js'
 import User from '../models/User.js'
-import { errorMessages } from '../utils/index.js'
+import { errorMessages, generateJWT } from '../utils/index.js'
 
 const register = async (req, res) => {
     if(Object.values(req.body).includes('')) {
@@ -24,6 +24,7 @@ const register = async (req, res) => {
        
         const { username, email, token } = result
         sendEmailVerification({ username, email, token })
+        
         res.status(201).json({ msg: 'Usuario creado correctamente, revisa tu correo' })
     } catch (error) {
         if (error.code === 11000) {
@@ -42,9 +43,9 @@ const verifyAccount = async (req, res) => {
         user.verified = true
         user.token = ""
         await user.save()
-        res.status(200).json({ msg: 'Cuenta verificada correctamente' })
+        res.status(200).json({ msg: 'Cuenta verificada correctamente, ya puedes iniciar sesión' })
     } catch (error) {
-        console.log(error)
+        return errorMessages(res, 'Hubo un error', 404)
     }
 }
 
@@ -58,7 +59,11 @@ const login = async (req, res) => {
         return errorMessages(res, 'Tu cuenta no ha sido confirmada aún', 400)
     }
     if(await user.checkPassword(password)) {
+
+        const token = generateJWT(user._id)
+        console.log(token)
         res.status(200).json({ msg: 'Usuario Autenticado' })
+
     } else {
         return errorMessages(res, 'La contraseña es incorrecta', 400)
     }
