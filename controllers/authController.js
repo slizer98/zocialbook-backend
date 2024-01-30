@@ -61,8 +61,7 @@ const login = async (req, res) => {
     if(await user.checkPassword(password)) {
 
         const token = generateJWT(user._id)
-        console.log(token)
-        res.status(200).json({ msg: 'Usuario Autenticado' })
+        res.status(200).json({ token })
 
     } else {
         return errorMessages(res, 'La contraseña es incorrecta', 400)
@@ -70,8 +69,13 @@ const login = async (req, res) => {
 
 }
 
+const user = async (req, res) => {
+    console.log(req.user)
+}
+
 export {
     register,
     verifyAccount,
-    login
+    login, 
+    user
 }
