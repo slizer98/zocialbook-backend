@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  challenge: {
+    type: Number,
+    default: 0,
+  },
   books: {
     read: [
       {
