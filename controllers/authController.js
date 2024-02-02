@@ -17,8 +17,9 @@ const register = async (req, res) => {
     if(password.trim().length < MIN_PASSWORD_LENGTH) {
         return errorMessages(res, `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`, 400)
     }
-    
+
     try {
+        console.log("dentro del try de register")
         const user = new User(req.body)
         const result = await user.save()
        
