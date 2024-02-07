@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  oldPasswords: [
+    {
+      type: String,
+    },
+  ],
   birthday: {
     type: Date,
   },

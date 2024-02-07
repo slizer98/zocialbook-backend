@@ -1,6 +1,7 @@
 import { sendEmailVerification } from '../emails/authEmailService.js'
 import User from '../models/User.js'
 import { errorMessages, generateJWT } from '../utils/index.js'
+import bcrypt from 'bcrypt'
 
 const register = async (req, res) => {
     if(Object.values(req.body).includes('')) {
@@ -19,7 +20,6 @@ const register = async (req, res) => {
     }
 
     try {
-        console.log("dentro del try de register")
         const user = new User(req.body)
         const result = await user.save()
        
@@ -70,14 +70,50 @@ const login = async (req, res) => {
 
 }
 
+const changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body
+    const { user } = req
+    
+    if( Object.values(req.body).includes('') ) {
+        return errorMessages(res, 'Todos los campos son obligatorios', 400);
+    }
+    
+    if (!user) {
+        return errorMessages(res, 'Usuario no encontrado', 404);
+    }
+    try {
+        const userFromDB = await User.findById(user._id);
+
+        if (!userFromDB) {
+            return errorMessages(res, 'Usuario no encontrado', 404);
+        }
+        
+        const isPasswordCorrect = await bcrypt.compare(oldPassword, userFromDB.password);
+        if (!isPasswordCorrect) {
+            return errorMessages(res, 'La contraseña actual es incorrecta', 400);
+        }
+        userFromDB.oldPasswords.push(userFromDB.password);
+        userFromDB.password = newPassword;
+        const token = generateJWT(userFromDB._id); 
+        await userFromDB.save();
+        return res.json({ token });
+    } catch (error) {
+        console.error('Error al cambiar la contraseña:', error);
+        return errorMessages(res, 'Ocurrió un error al cambiar la contraseña', 500);
+    }
+}
+    
+
 const user = async (req, res) => {
     const { user } = req
     res.status(200).json(user)
 }
 
 export {
+
     register,
     verifyAccount,
     login, 
+    changePassword,
     user
 }

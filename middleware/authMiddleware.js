@@ -6,8 +6,7 @@ const authMiddleware = async(req, res, next) => {
         try {
             const token = req.headers.authorization.split(' ')[1]
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
-            req.user = await User.findById(decoded.id).select('-password -verified -token -messages -__v ')
-            console.log(req.user)
+            req.user = await User.findById(decoded.id).select('-password -verified -token -messages -oldPasswords -__v ')
             next()
         } catch {
             const error = new Error('No estas autorizado')
