@@ -77,6 +77,9 @@ const changePassword = async (req, res) => {
     if( Object.values(req.body).includes('') ) {
         return errorMessages(res, 'Todos los campos son obligatorios', 400);
     }
+    if (oldPassword === newPassword) {
+        return errorMessages(res, 'La nueva contraseña debe ser diferente a la actual', 400);
+    }
     
     if (!user) {
         return errorMessages(res, 'Usuario no encontrado', 404);
@@ -88,17 +91,31 @@ const changePassword = async (req, res) => {
             return errorMessages(res, 'Usuario no encontrado', 404);
         }
         
-        const isPasswordCorrect = await bcrypt.compare(oldPassword, userFromDB.password);
+        const isPasswordCorrect = await bcrypt.compare(oldPassword, userFromDB.password)
+
         if (!isPasswordCorrect) {
             return errorMessages(res, 'La contraseña actual es incorrecta', 400);
         }
+        // Check if the new password is the same as the old ones
+        const newPasswordCopy = newPassword;
+        let isOldPasswordUsed = false;
+        for (const oldPassword of userFromDB.oldPasswords) {
+            if (await bcrypt.compare(newPasswordCopy, oldPassword)) {
+                isOldPasswordUsed = true;
+                break;
+            }
+        }
+
+        if (isOldPasswordUsed) {
+            return errorMessages(res, 'No puedes usar contraseñas anteriores', 400);
+        }
+
         userFromDB.oldPasswords.push(userFromDB.password);
         userFromDB.password = newPassword;
         const token = generateJWT(userFromDB._id); 
         await userFromDB.save();
         return res.json({ token });
     } catch (error) {
-        console.error('Error al cambiar la contraseña:', error);
         return errorMessages(res, 'Ocurrió un error al cambiar la contraseña', 500);
     }
 }
