@@ -1,3 +1,4 @@
+import { json } from 'express'
 import { sendEmailVerification } from '../emails/authEmailService.js'
 import User from '../models/User.js'
 import { errorMessages, generateJWT } from '../utils/index.js'
@@ -32,6 +33,11 @@ const register = async (req, res) => {
             return errorMessages(res, 'El nombre de usuario debe ser unico', 400)
         }
     }
+}
+
+const getUsernameUrl = async (req, res) => {
+    const { user } = req
+    return res.status(200).json({ usernameUrl: user.usernameUrl })
 }
 
 const verifyAccount = async (req, res) => {
@@ -70,7 +76,12 @@ const login = async (req, res) => {
 
 }
 
-const changePassword = async (req, res) => {
+const updateUser = async (req, res) => {
+    const { user } = req
+    const { username, email, favoriteAuthor, location, birthday} = req.body
+}
+
+const updatePassword = async (req, res) => {
     const { oldPassword, newPassword } = req.body
     const { user } = req
     
@@ -123,14 +134,19 @@ const changePassword = async (req, res) => {
 
 const user = async (req, res) => {
     const { user } = req
-    res.status(200).json(user)
+    try {
+        res.status(200).json(user)
+    } catch (error) {
+        return errorMessages(res, 'Ocurrió un error en usernameUrl', 500)
+    }
 }
 
 export {
-
     register,
+    getUsernameUrl,
     verifyAccount,
     login, 
-    changePassword,
+    updateUser,
+    updatePassword,
     user
 }

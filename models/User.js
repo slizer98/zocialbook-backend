@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt'
-import { uniqueId } from '../utils/index.js'
+import { uniqueId, urlId } from '../utils/index.js'
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  usernameUrl: String,
   email: {
     type: String,
     required: true,
@@ -124,6 +125,9 @@ userSchema.pre('save', async function(next) {
 
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
+    const usernameLower = this.username.toLowerCase()
+    const clearUsername = usernameLower.replace(/[^a-zA-Z0-9]/g, '-')
+    this.usernameUrl = urlId(clearUsername)
 })
 
 userSchema.methods.checkPassword = async function(inputPassword) {

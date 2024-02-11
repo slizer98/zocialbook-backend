@@ -20,6 +20,9 @@ function errorMessages(res, msgError, code) {
 
 const uniqueId = () => Date.now().toString(32) + Math.random().toString(32).substring(2)
 
+
+const urlId = (username) => username + Date.now() + 'zb'
+
 const generateJWT = (id) => {
     const token = jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: '30d'
@@ -32,5 +35,6 @@ export {
     handleNotFoundError,
     errorMessages,
     uniqueId,
+    urlId,
     generateJWT
 }
