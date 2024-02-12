@@ -35,10 +35,6 @@ const register = async (req, res) => {
     }
 }
 
-const getUsernameUrl = async (req, res) => {
-    const { user } = req
-    return res.status(200).json({ usernameUrl: user.usernameUrl })
-}
 
 const verifyAccount = async (req, res) => {
     const { token } = req.params
@@ -143,7 +139,6 @@ const user = async (req, res) => {
 
 export {
     register,
-    getUsernameUrl,
     verifyAccount,
     login, 
     updateUser,
