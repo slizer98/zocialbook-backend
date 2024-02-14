@@ -1,4 +1,4 @@
-import { json } from 'express'
+
 import { sendEmailVerification } from '../emails/authEmailService.js'
 import User from '../models/User.js'
 import { errorMessages, generateJWT } from '../utils/index.js'
@@ -72,10 +72,7 @@ const login = async (req, res) => {
 
 }
 
-const updateUser = async (req, res) => {
-    const { user } = req
-    const { username, email, favoriteAuthor, location, birthday} = req.body
-}
+
 
 const updatePassword = async (req, res) => {
     const { oldPassword, newPassword } = req.body
@@ -141,7 +138,6 @@ export {
     register,
     verifyAccount,
     login, 
-    updateUser,
     updatePassword,
     user
 }

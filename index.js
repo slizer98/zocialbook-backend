@@ -3,6 +3,7 @@ import { db } from './config/db.js'
 import cors from 'cors';
 import colors from 'colors';
 import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import dotenv from 'dotenv';
 dotenv.config()
 
@@ -24,6 +25,7 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use('/api/auth', authRoutes)
+app.use('/api/user', userRoutes)
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {

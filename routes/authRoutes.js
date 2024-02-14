@@ -1,5 +1,5 @@
 import express from "express";
-import { register, verifyAccount, login, user, updatePassword, updateUser } from "../controllers/authController.js";
+import { register, verifyAccount, login, user, updatePassword} from "../controllers/authController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 const router = express.Router();
 
@@ -9,7 +9,6 @@ router.post('/login', login)
 
 // private route
 router.get('/user', authMiddleware, user)
-router.patch('/update-user', authMiddleware, updateUser)
 router.patch('/change-password', authMiddleware, updatePassword)
 
 
