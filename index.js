@@ -11,18 +11,19 @@ const app = express();
 
 db()
 
-const whiteList = [process.env.FRONTEND_URL, undefined]
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (whiteList.includes(origin)) {
-            callback(null, true)
-        } else {
-            callback(new Error('Error de CORS'))
-        }
-    }
-}
+// const whiteList = [process.env.FRONTEND_URL, undefined]
+// const corsOptions = {
+//     origin: function (origin, callback) {
+//         if (whiteList.includes(origin)) {
+//             callback(null, true)
+//         } else {
+//             callback(new Error('Error de CORS'))
+//         }
+//     }
+// }
 
-app.use(cors(corsOptions))
+// app.use(cors(corsOptions))
+app.use(cors())
 app.use(express.json())
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
