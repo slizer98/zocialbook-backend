@@ -36,7 +36,7 @@ const updateUser = async (req, res) => {
     }
 }
 
-const saveAvatar = async (req, res) => {
+const saveProfilePicture = async (req, res) => {
     const { user } = req
     const { profilePicture } = req.body
 
@@ -67,5 +67,5 @@ const saveAvatar = async (req, res) => {
 
 export {
     updateUser,
-    saveAvatar
+    saveProfilePicture,
 }
